@@ -27,6 +27,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import net.sterbee.magicarry.item.CustomCreativeModeTab;
+import net.sterbee.magicarry.item.ModItems;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -40,7 +42,13 @@ public class Magicarry
 
     public Magicarry()
     {
+
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        CustomCreativeModeTab.register(modEventBus);
+
+        //Eventbus to move items to registry and load when needed
+        ModItems.register(modEventBus);
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
@@ -48,7 +56,7 @@ public class Magicarry
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
 
-        // Register the item to a creative tab
+        //Allows you to register items into creative mode tabs
         modEventBus.addListener(this::addCreative);
     }
 
@@ -60,7 +68,12 @@ public class Magicarry
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event)
     {
-
+        //Adds staffs into the already existing creative mod tab "ingredients"
+        if(event.getTabKey() == CreativeModeTabs.INGREDIENTS)
+        {
+            event.accept(ModItems.STAFFS);
+            event.accept(ModItems.BOOKS);
+        }
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
